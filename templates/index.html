@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Klasifikasi Smartphone</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="container">
+            <a href="/" class="logo">Smart<span class="gradient-text">Class</span></a>
+            <ul class="nav-links">
+                <li><a href="#beranda">Beranda</a></li>
+                <li><a href="#deskripsi">Informasi</a></li>
+                <li><a href="#panduan">Panduan</a></li>
+                <li><a href="#aplikasi" class="active">Manual AI</a></li>
+                <li><a href="/explorer">Explorer App</a></li>
+                <li><a href="/history">Riwayat</a></li>
+            </ul>
+            <div class="theme-toggle" onclick="toggleTheme()" id="themeIcon">🌓</div>
+        </div>
+    </nav>
+
+    <!-- Beranda (Hero) -->
+    <section id="beranda" class="hero">
+        <div class="container">
+            <h1>Klasifikasi Smartphone <br><span class="gradient-text">Masa Depan</span></h1>
+            <p>Sistem cerdas untuk mengidentifikasi dan merekomendasikan smartphone berdasarkan spesifikasi dan
+                kebutuhan Anda dengan akurasi tinggi.</p>
+            <a href="#aplikasi" class="btn btn-primary">Mulai Sekarang</a>
+        </div>
+    </section>
+
+    <!-- Deskripsi -->
+    <section id="deskripsi" class="description app-section">
+        <div class="container">
+            <div class="desc-content">
+                <div class="desc-text">
+                    <h2>Tentang <span class="gradient-text">Sistem</span></h2>
+                    <p>Sistem Klasifikasi Smartphone ini dirancang untuk memudahkan pengguna dalam menentukan kategori
+                        smartphone yang sesuai dengan spesifikasi teknis.</p>
+                    <p>Menggunakan algoritma sederhana namun efektif, sistem ini mengevaluasi berbagai parameter seperti
+                        RAM, Memori Internal, dan Kapasitas Baterai untuk memberikan hasil prediksi yang cepat dan
+                        akurat.</p>
+                    <ul style="margin-top: 20px;">
+                        <li>✓ Analisis Spesifikasi Teknis</li>
+                        <li>✓ Antarmuka Modern & Cepat</li>
+                        <li>✓ Hasil Real-time</li>
+                    </ul>
+                </div>
+                <div class="desc-image">
+                    <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop"
+                        alt="Smartphone Modern">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Panduan (Card Points) -->
+    <section id="panduan" class="guide app-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Panduan <span class="gradient-text">Penggunaan</span></h2>
+                <p>Ikuti langkah-langkah mudah berikut untuk menggunakan aplikasi.</p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-number">01</div>
+                    <h3 class="gradient-text" style="font-size: 1.5rem; margin-bottom: 15px;">Isi Spesifikasi</h3>
+                    <p>Masukkan data spesifikasi smartphone seperti RAM, ROM, dan Baterai pada form yang tersedia.</p>
+                </div>
+                <div class="card">
+                    <div class="card-number">02</div>
+                    <h3 class="gradient-text" style="font-size: 1.5rem; margin-bottom: 15px;">Klik Prediksi</h3>
+                    <p>Tekan tombol prediksi untuk melihat hasil analisis model AI secara instan.</p>
+                </div>
+                <div class="card">
+                    <div class="card-number">03</div>
+                    <h3 class="gradient-text" style="font-size: 1.5rem; margin-bottom: 15px;">Lihat Hasil</h3>
+                    <p>Sistem akan menampilkan kategori smartphone berdasarkan klasifikasi algoritma KNN.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Aplikasi Manual -->
+    <section id="aplikasi" style="padding-bottom: 80px;">
+        <div class="container">
+            <div id="manualContainer">
+                <div class="app-container">
+                    <form id="predictionForm" onsubmit="predictSmartphone(); return false;">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="processor_speed">Kecepatan Processor (GHz)</label>
+                                <select id="processor_speed" class="form-control">
+                                    <option value="1.8">1.8 GHz</option>
+                                    <option value="2.0">2.0 GHz</option>
+                                    <option value="2.2">2.2 GHz</option>
+                                    <option value="2.4">2.4 GHz</option>
+                                    <option value="2.6">2.6 GHz</option>
+                                    <option value="2.8">2.8 GHz</option>
+                                    <option value="3.0">3.0 GHz</option>
+                                    <option value="3.2" selected>3.2 GHz</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="num_cores">Jumlah Core Processor</label>
+                                <select id="num_cores" class="form-control">
+                                    <option value="4">Quad Core (4)</option>
+                                    <option value="6">Hexa Core (6)</option>
+                                    <option value="8" selected>Octa Core (8)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ram_capacity">Kapasitas RAM (GB)</label>
+                                <select id="ram_capacity" class="form-control">
+                                    <option value="2">2 GB</option>
+                                    <option value="4">4 GB</option>
+                                    <option value="6">6 GB</option>
+                                    <option value="8" selected>8 GB</option>
+                                    <option value="12">12 GB</option>
+                                    <option value="16">16 GB</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="internal_memory">Memori Internal (GB)</label>
+                                <select id="internal_memory" class="form-control">
+                                    <option value="32">32 GB</option>
+                                    <option value="64">64 GB</option>
+                                    <option value="128" selected>128 GB</option>
+                                    <option value="256">256 GB</option>
+                                    <option value="512">512 GB</option>
+                                    <option value="1024">1 TB</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="battery_capacity">Kapasitas Baterai (mAh)</label>
+                                <select id="battery_capacity" class="form-control">
+                                    <option value="3000">3000 mAh</option>
+                                    <option value="4000">4000 mAh</option>
+                                    <option value="4500">4500 mAh</option>
+                                    <option value="5000" selected>5000 mAh</option>
+                                    <option value="6000">6000 mAh</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="primary_camera_rear">Kamera Belakang (MP)</label>
+                                <select id="primary_camera_rear" class="form-control">
+                                    <option value="8">8 MP</option>
+                                    <option value="12">12 MP</option>
+                                    <option value="13">13 MP</option>
+                                    <option value="16">16 MP</option>
+                                    <option value="32">32 MP</option>
+                                    <option value="48">48 MP</option>
+                                    <option value="50" selected>50 MP</option>
+                                    <option value="64">64 MP</option>
+                                    <option value="108">108 MP</option>
+                                    <option value="200">200 MP</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="primary_camera_front">Kamera Depan (MP)</label>
+                                <select id="primary_camera_front" class="form-control">
+                                    <option value="5">5 MP</option>
+                                    <option value="8">8 MP</option>
+                                    <option value="12">12 MP</option>
+                                    <option value="13">13 MP</option>
+                                    <option value="16" selected>16 MP</option>
+                                    <option value="32">32 MP</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="rating">Rating Ahli (0-100)</label>
+                                <input type="number" id="rating" class="form-control" placeholder="Contoh: 85" required
+                                    min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="price_display">Harga Estimasi (Rupiah)</label>
+                                <input type="text" id="price_display" class="form-control"
+                                    placeholder="Contoh: 5.000.000" oninput="formatPriceInput(this)" required>
+                                <input type="hidden" id="price_currency">
+                                <small style="color: var(--text-muted); font-size: 0.7rem;">Sistem akan mengonversi
+                                    otomatis ke nilai model AI.</small>
+                            </div>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 30px;">
+                            <button type="submit" class="btn btn-primary" id="predictBtn">Prediksi Segment
+                                Smartphone</button>
+                        </div>
+                    </form>
+
+                    <div id="resultOutput" class="result">
+                        <span class="prediction-title">Analisis Kecerdasan Buatan</span>
+                        <div style="font-size: 3rem; margin-bottom: 10px;">🤖</div>
+                        <div id="resultText" class="prediction-text">-</div>
+                        <p id="resultDesc" class="prediction-desc"></p>
+
+                        <div id="recommendations"
+                            style="display:none; margin-top: 50px; border-top: 1px dashed var(--border); padding-top: 30px; text-align: left;">
+                            <h4
+                                style="font-size: 0.8rem; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 25px; text-align: center;">
+                                Smartphone Serupa di Database</h4>
+                            <div id="recContainer"
+                                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 SmartClass Sistem Klasifikasi. All rights reserved.</p>
+            <p style="font-size: 0.9rem; margin-top: 10px; color: #555;">Dibuat dengan Modern Web Tech</p>
+        </div>
+    </footer>
+
+    <!-- JS -->
+    <script src="/static/script.js"></script>
+</body>
+
+</html>

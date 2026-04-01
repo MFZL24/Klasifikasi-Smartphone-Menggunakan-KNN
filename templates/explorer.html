@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smartphone Explorer AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .explorer-header {
+            padding: 150px 0 60px;
+            text-align: center;
+            background: linear-gradient(to bottom, rgba(112, 0, 255, 0.05), transparent);
+        }
+
+        .search-container-large {
+            max-width: 700px;
+            margin: 40px auto 0;
+            position: relative;
+        }
+
+        .search-container-large .form-control {
+            padding: 20px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 5%;
+            right: 5%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            z-index: 100;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .suggestion-item {
+            padding: 15px 25px;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.2s;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .suggestion-item:hover {
+            background: var(--glass);
+            color: var(--primary);
+        }
+
+        .phone-grid-full {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 40px 0;
+        }
+
+        .phone-card-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phone-card-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient);
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .phone-card-item:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .phone-card-item:hover::before {
+            opacity: 1;
+        }
+
+        .phone-brand-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* Modal Spec View */
+        .modal-spec {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content-card {
+            background: var(--bg-card);
+            width: 100%;
+            max-width: 800px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            padding: 40px;
+            position: relative;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 2rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .spec-grid-modal {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .spec-item-modal {
+            background: var(--glass);
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+        }
+
+        .spec-item-modal span {
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <a href="/" class="logo">Smart<span class="gradient-text">Class</span></a>
+            <ul class="nav-links">
+                <li><a href="/">Manual AI</a></li>
+                <li><a href="/explorer" class="active">Explorer App</a></li>
+                <li><a href="/history">Riwayat</a></li>
+            </ul>
+            <div class="theme-toggle" onclick="toggleTheme()" id="themeIcon">🌓</div>
+        </div>
+    </nav>
+
+    <header class="explorer-header container">
+        <h1 style="font-size: 3.5rem;">Cari <span class="gradient-text">Smartphone</span></h1>
+        <p style="color: var(--text-muted); margin-top: 15px; font-size: 1.1rem;">Telusuri ribuan data teknis dan
+            dapatkan klasifikasi AI secara instan.</p>
+
+        <div id="brandCards"
+            style="display: flex; gap: 15px; overflow-x: auto; padding: 20px 0; max-width: 900px; margin: 0 auto; scrollbar-width: none;">
+            <!-- Brand cards will be populated here -->
+        </div>
+
+        <div class="search-container-large" style="display: flex; gap: 15px; align-items: center; max-width: 900px;">
+            <div style="flex: 1;">
+                <label
+                    style="display:block; text-align:left; font-size:0.8rem; margin-bottom:5px; color:var(--text-muted);">Brand:</label>
+                <select id="brandSelect" class="form-control" style="border-radius: 20px; padding: 15px;">
+                    <option value="all">Semua Brand</option>
+                </select>
+            </div>
+            <div style="flex: 2;">
+                <label
+                    style="display:block; text-align:left; font-size:0.8rem; margin-bottom:5px; color:var(--text-muted);">Cari
+                    Model:</label>
+                <input type="text" id="searchInput" class="form-control" placeholder="Ketik nama HP..."
+                    list="phoneDataList" autocomplete="off" style="border-radius: 20px; padding: 15px;">
+                <datalist id="phoneDataList"></datalist>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="phoneGrid" class="phone-grid-full">
+            <!-- Grid generated by JS -->
+        </div>
+
+        <div id="loadMore" style="text-align: center; margin-bottom: 100px;">
+            <p style="color: var(--text-muted);">Tampilan 50 smartphone pertama...</p>
+        </div>
+    </main>
+
+    <!-- Modal Specification -->
+    <div id="specModal" class="modal-spec">
+        <div class="modal-content-card">
+            <span class="close-modal" onclick="closeModal()">×</span>
+            <div id="modalHeader">
+                <span class="phone-brand-tag">Technical Data</span>
+                <h2 id="phoneName" class="gradient-text" style="font-size: 2.5rem; margin-bottom: 5px;">Model Name</h2>
+            </div>
+
+            <div class="spec-grid-modal">
+                <div class="spec-item-modal"><span>Processor</span><strong id="specProc"></strong></div>
+                <div class="spec-item-modal"><span>Cores</span><strong id="specCores"></strong></div>
+                <div class="spec-item-modal"><span>RAM</span><strong id="specRam"></strong></div>
+                <div class="spec-item-modal"><span>Internal Memory</span><strong id="specInt"></strong></div>
+                <div class="spec-item-modal"><span>Battery</span><strong id="specBat"></strong></div>
+                <div class="spec-item-modal"><span>Rear Camera</span><strong id="specCam"></strong></div>
+                <div class="spec-item-modal"><span>Price Value</span><strong id="specPrice"></strong></div>
+                <div class="spec-item-modal"><span>Expert Rating</span><strong id="specRat"></strong></div>
+            </div>
+
+            <div style="margin-top: 40px; text-align: center;">
+                <button onclick="predictSelected()" class="btn btn-primary" id="explorePredictBtn"
+                    style="padding: 15px 40px; font-size: 1rem; width: 100%;">📊 ANALISIS SEGMENTASI AI</button>
+
+                <div id="exploreResult" style="display:none; margin-top: 30px; animation: slideUp 0.4s ease;">
+                    <div id="explorePredictionText" class="prediction-text" style="font-size: 2.8rem;">-</div>
+                    <p id="predDesc" style="color: var(--text-muted); margin-top: 10px;"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+    <script>
+        let allModels = [];
+        let filteredModels = [];
+        let selectedModel = null;
+
+        window.onload = async () => {
+            const resp = await fetch('/models');
+            allModels = await resp.json();
+            filteredModels = [...allModels];
+
+            populateFilters();
+            renderGrid(filteredModels.slice(0, 50));
+
+            document.getElementById('searchInput').oninput = applyFilters;
+            document.getElementById('brandSelect').onchange = applyFilters;
+        };
+
+        function populateFilters() {
+            const brands = [...new Set(allModels.map(m => m.brand))].filter(b => b).sort();
+            const brandSelect = document.getElementById('brandSelect');
+            const brandCards = document.getElementById('brandCards');
+
+            brandCards.innerHTML = '';
+
+            const brandCounts = {};
+            allModels.forEach(m => {
+                if (m.brand) brandCounts[m.brand] = (brandCounts[m.brand] || 0) + 1;
+            });
+            const topBrands = Object.keys(brandCounts).sort((a, b) => brandCounts[b] - brandCounts[a]).slice(0, 12);
+
+            topBrands.forEach(b => {
+                const bcard = document.createElement('div');
+                bcard.style = "flex: 0 0 auto; padding: 12px 28px; background: var(--bg-card); border: 2px solid var(--border); border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; transition: 0.3s; color: var(--text-main); white-space: nowrap;";
+                bcard.innerText = b;
+                bcard.onclick = () => {
+                    brandSelect.value = b;
+                    applyFilters();
+                    document.querySelectorAll('#brandCards div').forEach(el => {
+                        el.style.borderColor = 'var(--border)';
+                        el.style.background = 'var(--bg-card)';
+                    });
+                    bcard.style.borderColor = 'var(--primary)';
+                    bcard.style.background = 'rgba(0, 242, 255, 0.05)';
+                };
+                brandCards.appendChild(bcard);
+            });
+
+            brands.forEach(b => {
+                const opt = document.createElement('option');
+                opt.value = b;
+                opt.innerText = b.toUpperCase();
+                brandSelect.appendChild(opt);
+            });
+
+            const datalist = document.getElementById('phoneDataList');
+            datalist.innerHTML = '';
+            allModels.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m.model;
+                datalist.appendChild(opt);
+            });
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const brand = document.getElementById('brandSelect').value;
+
+            filteredModels = allModels.filter(m => {
+                const matchSearch = m.model.toLowerCase().includes(search);
+                const matchBrand = (brand === 'all' || m.brand === brand);
+                return matchSearch && matchBrand;
+            });
+
+            renderGrid(filteredModels.slice(0, 50));
+
+            // Auto open if exact match
+            const exact = allModels.find(m => m.model.toLowerCase() === search);
+            if (exact && search.length > 5) openSpecModal(exact.model);
+        }
+
+        function renderGrid(models) {
+            const grid = document.getElementById('phoneGrid');
+            grid.innerHTML = '';
+            if (models.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 80px; color: var(--text-muted);">Tidak ada smartphone yang cocok.</div>';
+                return;
+            }
+            models.forEach(m => {
+                const card = document.createElement('div');
+                card.className = 'phone-card-item';
+
+                let bClass = 'badge-budget';
+                if (m.prediction === 'Flagship') bClass = 'badge-flagship';
+                else if (m.prediction === 'Midrange') bClass = 'badge-midrange';
+
+                const formattedPrice = formatIDR(m.price || 0);
+
+                card.innerHTML = `
+                    <div style="position: absolute; top: 15px; right: 15px; font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border);" class="${bClass}">
+                        ${(m.prediction || 'UNKNOWN').toUpperCase()}
+                    </div>
+                    <div style="text-align: left; width: 100%;">
+                        <span class="phone-brand-tag" style="margin-bottom: 5px;">${(m.brand || 'SMARTPHONE').toUpperCase()}</span>
+                        <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">${m.model}</h3>
+                        <p style="color: var(--primary); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 15px;">${formattedPrice}</p>
+                    </div>
+                    <button class="btn btn-primary" style="margin-top: auto; font-size: 0.9rem; width: 100%; border-radius: 12px; padding: 12px;">Lihat Detail</button>
+                `;
+                card.onclick = () => openSpecModal(m.model);
+                grid.appendChild(card);
+            });
+        }
+
+        async function openSpecModal(name) {
+            const resp = await fetch(`/get_specs?name=${encodeURIComponent(name)}`);
+            selectedModel = await resp.json();
+
+            document.getElementById('phoneName').innerText = selectedModel.model;
+            document.getElementById('specProc').innerText = selectedModel.processor_speed + ' GHz';
+            document.getElementById('specCores').innerText = selectedModel.num_cores;
+            document.getElementById('specRam').innerText = selectedModel.ram_capacity + ' GB';
+            document.getElementById('specInt').innerText = selectedModel.internal_memory + ' GB';
+            document.getElementById('specBat').innerText = selectedModel.battery_capacity + ' mAh';
+            document.getElementById('specCam').innerText = selectedModel.primary_camera_rear + ' MP';
+            document.getElementById('specRat').innerText = selectedModel.rating + '/100';
+            document.getElementById('specPrice').innerText = formatIDR(selectedModel.price);
+
+            document.getElementById('exploreResult').style.display = 'none';
+            document.getElementById('explorePredictBtn').innerText = '📊 ANALISIS SEGMENTASI AI';
+            document.getElementById('explorePredictBtn').disabled = false;
+            document.getElementById('specModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('specModal').style.display = 'none';
+        }
+
+        async function predictSelected() {
+            const btn = document.getElementById('explorePredictBtn');
+            const resultDiv = document.getElementById('exploreResult');
+            const textDiv = document.getElementById('explorePredictionText');
+            const desc = document.getElementById('predDesc');
+
+            btn.innerText = '🤖 MENGANALISIS...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(selectedModel)
+                });
+                const result = await response.json();
+
+                textDiv.innerText = result.prediction.toUpperCase();
+                textDiv.className = 'prediction-text badge-' + result.prediction.toLowerCase();
+
+                if (result.prediction === 'Flagship') desc.innerText = "Perangkat top-tier dengan performa maksimal.";
+                else if (result.prediction === 'Midrange') desc.innerText = "Keseimbangan antara performa dan nilai jual.";
+                else desc.innerText = "Fokus pada efisiensi biaya dan kebutuhan dasar.";
+
+                resultDiv.style.display = 'block';
+                saveToHistory(selectedModel.model, selectedModel, result.prediction);
+            } catch (e) {
+                alert('Server Error');
+            } finally {
+                btn.innerText = '📊 ANALISIS SEGMENTASI AI';
+                btn.disabled = false;
+            }
+        }
+
+        window.onclick = (e) => {
+            if (e.target == document.getElementById('specModal')) closeModal();
+        }
+    </script>
+</body>
+
+</html>
