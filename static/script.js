@@ -119,17 +119,24 @@ async function predictSmartphone() {
                 result.recommendations.forEach(phone => {
                     const card = document.createElement('div');
                     card.className = 'rec-card';
-                    card.style.textAlign = 'left';
+                    card.style = "text-align: left; position: relative;";
+
+                    let bClass = 'badge-budget';
+                    if (phone.prediction === 'Flagship') bClass = 'badge-flagship';
+                    else if (phone.prediction === 'Midrange') bClass = 'badge-midrange';
+
                     card.innerHTML = `
-                        <div style="display:flex; justify-content:space-between;">
-                            <span style="font-size: 0.65rem; color: var(--primary); font-weight: 800; text-transform: uppercase;">${phone.brand}</span>
-                            <span style="background:var(--primary); color:#000; font-size:0.6rem; padding:2px 6px; border-radius:4px; font-weight:800;">SIMILAR</span>
+                        <div style="display:flex; justify-content:space-between; align-items: center; margin-bottom: 12px;">
+                            <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase;">${phone.brand}</span>
+                            <span class="prediction-text ${bClass}" style="font-size: 0.6rem; padding: 4px 8px; margin:0; border-radius:4px; font-weight:800;">
+                                ${phone.prediction.toUpperCase()}
+                            </span>
                         </div>
-                        <div style="font-weight: 700; margin-top: 8px; font-size: 1rem; color: var(--text-main);">${phone.model}</div>
-                        <div style="margin-top: 10px; display: flex; gap: 8px;">
-                            <span style="font-size: 0.7rem; background: var(--glass); padding: 4px 10px; border-radius: 6px; color: var(--text-muted); border:1px solid var(--border);">${phone.ram}GB RAM</span>
+                        <div style="font-weight: 700; font-size: 1.1rem; color: var(--text-main); margin-bottom: 8px; line-height: 1.3;">${phone.model}</div>
+                        <div style="margin-top: 15px; display: flex; align-items: center; justify-content: space-between;">
+                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--primary);">${formatIDR(phone.price)}</span>
+                            <span style="font-size: 0.65rem; background: var(--glass); padding: 2px 8px; border-radius: 4px; color: var(--text-muted); border: 1px solid var(--border);">${phone.ram}GB RAM</span>
                         </div>
-                        <div style="font-weight: 700; color: var(--primary); margin-top: 12px; font-size: 0.95rem;">${formatIDR(phone.price)}</div>
                     `;
                     recContainer.appendChild(card);
                 });

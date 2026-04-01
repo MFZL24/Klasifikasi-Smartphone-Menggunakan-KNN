@@ -145,19 +145,38 @@ def predict():
         # Recommendations (Nearest Neighbors)
         recs = []
         try:
-            # Try to get 6 neighbors
-            distances, indices = model.kneighbors(X_input, n_neighbors=6)
-            for idx in indices[0]:
+            from sklearn.neighbors import NearestNeighbors
+            # Prepare all data for NN (Numerical only)
+            X_all = pd.DataFrame(smartphone_list)[features]
+            
+            # Simple NN (using 7 to skip the exact match if it exists)
+            nn = NearestNeighbors(n_neighbors=7)
+            nn.fit(X_all)
+            
+            # Find neighbors for the current input
+            distances, indices = nn.kneighbors(X_input)
+            
+            for idx in indices[0][1:]: # Skip first if it's the exact same model or first match
                 phone = smartphone_list[idx]
+                
+                if 'ai_prediction' not in phone:
+                    try:
+                        p_data = [[float(phone.get(feat, 0)) for feat in features]]
+                        p_input = pd.DataFrame(p_data, columns=features)
+                        p_res = model.predict(p_input)[0]
+                        phone['ai_prediction'] = labels[int(p_res)]
+                    except:
+                        phone['ai_prediction'] = 'Unknown'
+
                 recs.append({
                     'model': phone['model'],
                     'brand': phone['brand_name'],
                     'price': phone['price'],
-                    'ram': phone['ram_capacity']
+                    'ram': phone['ram_capacity'],
+                    'prediction': phone['ai_prediction']
                 })
-        except:
-            # Fallback if kneighbors is not available
-            pass
+        except Exception as e:
+            print(f"Recommendation Engine Error: {e}")
 
         return jsonify({
             'prediction': result_label,
